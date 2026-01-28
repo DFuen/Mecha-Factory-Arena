@@ -32,28 +32,29 @@ const headStyle = computed(() => ({
 }
 
 .eye {
-  width: 16px;
-  height: 16px;
+  width: 40px;
+  height: 40px;
   background: black;
   border-radius: 50%;
   position: absolute;
-  top: 30px;
+  top: 40px;
 }
 
 .eye.left {
-  left: 30px;
+  left: 10px;
 }
 
 .eye.right {
-  right: 30px;
+  right: 10px;
 }
 
 .mouth {
   width: 50px;
-  height: 6px;
+  height:14px;
+  border-radius: 7px;
   background: black;
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
 }
