@@ -17,7 +17,7 @@ const props = defineProps<BodyProps>()
 
 const bodyStyle = computed(() => ({
   backgroundColor: props.color ?? '#9ca3af',
-  width: props.width ? `${props.width}px` : '160px',
+  width: props.width ? `${props.width}px` : '150px',
   height: props.height ? `${props.height}px` : '200px'
 }))
 </script>
@@ -27,6 +27,7 @@ const bodyStyle = computed(() => ({
   border-radius: 12px;
   margin: 10px auto 0;
   position: relative;
+  animation: quebote 1s infinite ease-in-out;
 }
 
 .panel {
@@ -38,5 +39,12 @@ const bodyStyle = computed(() => ({
   left: 50%;
   transform: translateX(-50%);
   border-radius: 6px;
+}
+
+@keyframes quebote {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+  
 }
 </style>

@@ -2,6 +2,8 @@
   <div class="legs" :style="legsStyle">
     <div class="leg left"></div>
     <div class="leg right"></div>
+    <div class="footR"></div>
+    <div class="footL"></div>
   </div>
 </template>
 
@@ -29,13 +31,35 @@ const legsStyle = computed(() => ({
 .legs {
   display: flex;
   justify-content: center;
-  margin: 10px auto 0;
+  margin: 0 auto 0;
 }
 
 .leg {
-  width: 40px;
+  width: 30px;
   height: 100%;
   background-color: var(--leg-color);
-  border-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.footL {
+  width: 70px;
+  height: 40px;
+  background-color: rgb(56, 55, 55);
+  border-top-right-radius: 20px;
+  border-top-left-radius:15px;
+  position: absolute;
+  left: calc(50% - 50px);
+  bottom: 0;
+}
+
+.footR {
+  width: 70px;
+  height: 40px;
+  background-color: rgb(56, 55, 55);
+  border-top-right-radius: 20px;
+  border-top-left-radius: 15px;
+  position: absolute;
+  right: calc(40% - 50px);
+  bottom: 0;
 }
 </style>
