@@ -11,10 +11,14 @@
 import { computed } from 'vue'
 
 interface LegsProps {
+  id?: string
   color?: string
   width?: number
   height?: number
   gap?: number
+  health?: number
+  attack?: number
+  defense?: number
 }
 
 const props = defineProps<LegsProps>()

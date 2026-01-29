@@ -11,9 +11,13 @@
 import { computed } from 'vue'
 
 interface ArmsProps {
+  id?: string
   color?: string
   length?: number
   thickness?: number
+  health?: number
+  attack?: number
+  defense?: number
 }
 
 const props = defineProps<ArmsProps>()

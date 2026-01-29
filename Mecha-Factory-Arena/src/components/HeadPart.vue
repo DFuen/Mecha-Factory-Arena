@@ -12,9 +12,13 @@
 import { computed } from 'vue'
 
 interface HeadProps {
+  id?: string
   color?: string
   borderRadius?: string
   size?: number
+  health?: number
+  attack?: number
+  defense?: number
 }
 
 const props = defineProps<HeadProps>()

@@ -8,9 +8,13 @@
 import { computed } from 'vue'
 
 interface BodyProps {
+  id?: string
   color?: string
   width?: number
   height?: number
+  health?: number
+  attack?: number
+  defense?: number
 }
 
 const props = defineProps<BodyProps>()
