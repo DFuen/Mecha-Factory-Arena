@@ -1,5 +1,10 @@
 <template>
-  <div class="legs" :style="legsStyle">
+  <div
+    class="legs"
+    :class="{ active }"
+    :style="legsStyle"
+    @click.stop="emit('select')"
+  >
     <div class="leg left"></div>
     <div class="leg right"></div>
   </div>
@@ -13,9 +18,11 @@ interface LegsProps {
   width?: number
   height?: number
   gap?: number
+  active?: boolean
 }
 
 const props = defineProps<LegsProps>()
+const emit = defineEmits(['select'])
 
 const legsStyle = computed(() => ({
   width: props.width ? `${props.width}px` : '160px',
@@ -30,6 +37,20 @@ const legsStyle = computed(() => ({
   display: flex;
   justify-content: center;
   margin: 10px auto 0;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* Hover */
+.legs:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Activo */
+.legs.active {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.9));
 }
 
 .leg {

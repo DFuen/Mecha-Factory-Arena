@@ -1,5 +1,10 @@
 <template>
-  <div class="body" :style="bodyStyle">
+  <div
+    class="body"
+    :class="{ active }"
+    :style="bodyStyle"
+    @click.stop="emit('select')"
+  >
     <div class="panel"></div>
   </div>
 </template>
@@ -11,9 +16,11 @@ interface BodyProps {
   color?: string
   width?: number
   height?: number
+  active?: boolean
 }
 
 const props = defineProps<BodyProps>()
+const emit = defineEmits(['select'])
 
 const bodyStyle = computed(() => ({
   backgroundColor: props.color ?? '#9ca3af',
@@ -27,7 +34,23 @@ const bodyStyle = computed(() => ({
   border-radius: 12px;
   margin: 10px auto 0;
   position: relative;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
+
+/* Hover */
+.body:hover {
+  transform: scale(1.03);
+  filter: brightness(1.1);
+}
+
+/* Activo */
+.body.active {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.9));
+}
+
+/* ===== Panel ===== */
 
 .panel {
   width: 60px;

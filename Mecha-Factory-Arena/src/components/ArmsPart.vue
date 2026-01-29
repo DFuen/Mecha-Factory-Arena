@@ -1,5 +1,10 @@
 <template>
-  <div class="arms" :style="armsStyle">
+  <div
+    class="arms"
+    :class="{ active }"
+    :style="armsStyle"
+    @click.stop="emit('select')"
+  >
     <div class="arm left"></div>
     <div class="arm right"></div>
   </div>
@@ -12,9 +17,11 @@ interface ArmsProps {
   color?: string
   length?: number
   thickness?: number
+  active?: boolean
 }
 
 const props = defineProps<ArmsProps>()
+const emit = defineEmits(['select'])
 
 const armsStyle = computed(() => ({
   '--arm-color': props.color ?? '#4b5563',
@@ -26,12 +33,25 @@ const armsStyle = computed(() => ({
 <style scoped>
 .arms {
   position: absolute;
-  top: 70px;                 /* altura del hombro */
+  top: 70px;
   left: 50%;
   transform: translateX(-50%);
-  width: 0;                  /* punto de anclaje central */
+  width: 0;
   height: var(--arm-thickness);
-  pointer-events: none;
+
+  pointer-events: auto;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.arms:hover {
+  transform: translateX(-50%) scale(1.05);
+  filter: brightness(1.15);
+}
+
+.arms.active {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.9));
 }
 
 .arm {
@@ -40,14 +60,22 @@ const armsStyle = computed(() => ({
   height: var(--arm-thickness);
   background-color: var(--arm-color);
   border-radius: 10px;
+  transition: transform 0.2s ease;
 }
 
-/* Brazos crecen hacia fuera del cuerpo */
 .arm.left {
   right: 60px;
 }
 
 .arm.right {
   left: 60px;
+}
+
+.arms:hover .arm.left {
+  transform: rotate(-5deg);
+}
+
+.arms:hover .arm.right {
+  transform: rotate(5deg);
 }
 </style>
