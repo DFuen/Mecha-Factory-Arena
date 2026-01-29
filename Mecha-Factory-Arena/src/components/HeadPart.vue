@@ -93,7 +93,7 @@ const headStyle = computed(() => ({
 
 @keyframes quebote {
   0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  57% { transform: translateY(-18px); }
   100% { transform: translateY(0); }
   
 }
