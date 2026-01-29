@@ -16,6 +16,48 @@ import Head from './HeadPart.vue'
 import Body from './BodyPart.vue'
 import Arms from './ArmsPart.vue'
 import Legs from './LegsPart.vue'
+
+// Definimos el contrato del robot usando los atributos exactos de tus archivos
+interface RobotConfig {
+  name: string;
+  head: {
+    color?: string;
+    borderRadius?: string;
+    size?: number;
+    health?: number;
+    attack?: number;
+    defense?: number;
+  };
+  body: {
+    color?: string;
+    width?: number;
+    height?: number;
+    health?: number;
+    attack?: number;
+    defense?: number;
+  };
+  arms: {
+    color?: string;
+    length?: number;
+    thickness?: number;
+    health?: number;
+    attack?: number;
+    defense?: number;
+  };
+  legs: {
+    color?: string;
+    width?: number;
+    height?: number;
+    gap?: number;
+    health?: number;
+    attack?: number;
+    defense?: number;
+  };
+}
+
+const props = defineProps<{
+  config: RobotConfig
+}>()
 </script>
 
 <style scoped>
