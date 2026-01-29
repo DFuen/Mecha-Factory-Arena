@@ -1,5 +1,5 @@
 <template>
-  <div class="legs" :style="legsStyle">
+  <div class="legs" :style="legsStyle" @mousedown.stop="$emit('mousedown', $event)">
     <div class="leg left"></div>
     <div class="leg right"></div>
     <div class="footR"></div>
@@ -22,6 +22,7 @@ interface LegsProps {
 }
 
 const props = defineProps<LegsProps>()
+defineEmits(['mousedown'])
 
 const legsStyle = computed(() => ({
   width: props.width ? `${props.width}px` : '160px',
@@ -66,4 +67,5 @@ const legsStyle = computed(() => ({
   right: calc(40% - 50px);
   bottom: 0;
 }
+
 </style>

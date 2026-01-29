@@ -1,7 +1,7 @@
 <template>
   <div class="arms" :style="armsStyle">
-    <div class="arm left"></div>
-    <div class="arm right"></div>
+    <div class="arm left" @mousedown.stop="$emit('mousedown', $event)"></div>
+    <div class="arm right" @mousedown.stop="$emit('mousedown', $event)"></div>
     <div class="hand left"></div>
     <div class="hand right"></div>
   </div>
@@ -21,6 +21,7 @@ interface ArmsProps {
 }
 
 const props = defineProps<ArmsProps>()
+defineEmits(['mousedown'])
 
 const armsStyle = computed(() => ({
   '--arm-color': props.color ?? '#4b5563',
@@ -37,8 +38,7 @@ const armsStyle = computed(() => ({
   transform: translateX(-50%);
   width: 0;                  /* punto de anclaje central */
   height: var(--arm-thickness);
-  pointer-events: none;
-  animation: quebote 1s infinite ease-in-out;
+  pointer-events: none; /* El contenedor no intercepta clics */
 }
 
 .arm {
@@ -47,6 +47,7 @@ const armsStyle = computed(() => ({
   height: var(--arm-thickness);
   background-color: var(--arm-color);
   border-radius: 10px;
+  pointer-events: auto; /* Los brazos sí interceptan clics */
 }
 
 /* Brazos crecen hacia fuera del cuerpo */
@@ -74,10 +75,5 @@ const armsStyle = computed(() => ({
   left: calc(60px + var(--arm-length) - 12px);
 }
 
-@keyframes quebote {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-  
-}
+
 </style>

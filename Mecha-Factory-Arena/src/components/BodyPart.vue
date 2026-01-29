@@ -1,5 +1,5 @@
 <template>
-  <div class="body" :style="bodyStyle">
+  <div class="body" :style="bodyStyle" @mousedown.stop="$emit('mousedown', $event)">
     <div class="panel"></div>
   </div>
 </template>
@@ -18,6 +18,7 @@ interface BodyProps {
 }
 
 const props = defineProps<BodyProps>()
+defineEmits(['mousedown'])
 
 const bodyStyle = computed(() => ({
   backgroundColor: props.color ?? '#9ca3af',
@@ -31,7 +32,6 @@ const bodyStyle = computed(() => ({
   border-radius: 12px;
   margin: 10px auto 0;
   position: relative;
-  animation: quebote 1s infinite ease-in-out;
 }
 
 .panel {
@@ -45,10 +45,5 @@ const bodyStyle = computed(() => ({
   border-radius: 6px;
 }
 
-@keyframes quebote {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-  
-}
+
 </style>
