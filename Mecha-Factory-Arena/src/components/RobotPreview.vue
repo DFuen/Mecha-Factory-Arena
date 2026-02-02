@@ -3,30 +3,30 @@
     <button @click="resetPositions" class="reset-button">Restablecer</button>
     <div class="robot">
       <Head
-        color="rgb(50, 116, 179)"
-        :size="120"
+        :color="config.head.color"
+        :size="config.head.size"
         :style="getPartStyle('head')"
         @mousedown.prevent="onDragStart('head', $event)"
       />
 
       <Arms
-        color="#4b5563"
-        :length="90"
-        :thickness="18"
+        :color="config.arms.color"
+        :length="config.arms.length"
+        :thickness="config.arms.thickness"
         :style="getPartStyle('arms')"
         @mousedown.prevent="onDragStart('arms', $event)"
       />
       <Body
-        color="rgb(50, 116, 179)"
-        :width="170"
-        :height="210"
+        :color="config.body.color"
+        :width="config.body.width"
+        :height="config.body.height"
         :style="getPartStyle('body')"
         @mousedown.prevent="onDragStart('body', $event)"
       />
 
       <Legs
-        color="#4b5563"
-        :height="120"
+        :color="config.legs.color"
+        :height="config.legs.height"
         :style="getPartStyle('legs')"
         @mousedown.prevent="onDragStart('legs', $event)"
       />
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import Head from './HeadPart.vue'
 import Body from './BodyPart.vue'
 import Arms from './ArmsPart.vue'
@@ -80,10 +80,35 @@ interface RobotConfig {
 }
 
 const props = defineProps<{
-  config: RobotConfig
+  config?: RobotConfig
 }>()
 
 type PartName = 'head' | 'body' | 'arms' | 'legs';
+
+const config = computed(() => ({
+  name: props.config?.name ?? 'Centurion',
+  head: {
+    color: props.config?.head?.color ?? 'rgb(50, 116, 179)',
+    borderRadius: props.config?.head?.borderRadius,
+    size: props.config?.head?.size ?? 100
+  },
+  body: {
+    color: props.config?.body?.color ?? 'rgb(50, 116, 179)',
+    width: props.config?.body?.width ?? 140,
+    height: props.config?.body?.height ?? 180
+  },
+  arms: {
+    color: props.config?.arms?.color ?? '#4b5563',
+    length: props.config?.arms?.length ?? 70,
+    thickness: props.config?.arms?.thickness ?? 16
+  },
+  legs: {
+    color: props.config?.legs?.color ?? '#4b5563',
+    width: props.config?.legs?.width,
+    height: props.config?.legs?.height ?? 100,
+    gap: props.config?.legs?.gap
+  }
+}))
 
 const isDragging = ref(false)
 const draggedPart = ref<PartName | null>(null)
@@ -166,16 +191,15 @@ const getPartStyle = (part: PartName) => {
 <style scoped>
 .robot-container {
   width: 100%;
-  height: 100vh;
+  height: 520px;
   position: relative;
   /* overflow: hidden; <-- Eliminado para quitar la barrera */
 }
 
 .reset-button {
   position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 20px;
+  right: 20px;
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
@@ -192,8 +216,8 @@ const getPartStyle = (part: PartName) => {
 
 .robot {
   position: relative;
-  width: 220px;
-  margin: 100px auto 40px; /* Aumentado margen superior para dejar espacio al botón */
+  width: 180px;
+  margin: 90px auto 40px;
   color: rgb(50, 116, 179);
 }
 

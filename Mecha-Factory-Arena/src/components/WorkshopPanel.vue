@@ -8,12 +8,23 @@
     <div class="workshop__form">
       <label class="field">
         <span>Nombre del robot</span>
-        <input v-model.trim="robotName" type="text" placeholder="Ej: Centurion" />
+        <input
+          :value="robotName"
+          type="text"
+          placeholder="Ej: Centurion"
+          @input="emit('update:robotName', ($event.target as HTMLInputElement).value)"
+        />
       </label>
 
       <label class="field">
         <span>Presupuesto inicial</span>
-        <input v-model.number="budget" type="number" min="0" step="50" />
+        <input
+          :value="budget"
+          type="number"
+          min="0"
+          step="50"
+          @input="emit('update:budget', Number(($event.target as HTMLInputElement).value))"
+        />
       </label>
 
       <div class="budget">
@@ -38,10 +49,10 @@
           </div>
           <button
             class="parts__action"
-            :class="{ selected: isSelected(part.id) }"
-            @click="togglePart(part)"
+            :class="{ selected: selectedIds.includes(part.id) }"
+            @click="emit('togglePart', part)"
           >
-            {{ isSelected(part.id) ? 'Quitar' : 'Agregar' }}
+            {{ selectedIds.includes(part.id) ? 'Quitar' : 'Agregar' }}
           </button>
         </li>
       </ul>
@@ -50,57 +61,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-
 type PartItem = {
   id: string
   name: string
   cost: number
 }
+const props = defineProps<{
+  robotName: string
+  budget: number
+  spent: number
+  remaining: number
+  errorMessage: string
+  parts: PartItem[]
+  selectedIds: string[]
+}>()
 
-const robotName = ref('')
-const budget = ref(1000)
-const selectedParts = ref<PartItem[]>([])
-const errorMessage = ref('')
-
-const parts: PartItem[] = [
-  { id: 'head_basic', name: 'Cabeza básica', cost: 200 },
-  { id: 'body_steel', name: 'Cuerpo de acero', cost: 350 },
-  { id: 'arms_hydraulic', name: 'Brazos hidráulicos', cost: 250 },
-  { id: 'legs_turbo', name: 'Piernas turbo', cost: 300 }
-]
-
-const spent = computed(() => selectedParts.value.reduce((total, item) => total + item.cost, 0))
-const remaining = computed(() => Math.max(budget.value - spent.value, 0))
-
-const isSelected = (id: string) => selectedParts.value.some((item) => item.id === id)
-
-const togglePart = (part: PartItem) => {
-  errorMessage.value = ''
-
-  if (isSelected(part.id)) {
-    selectedParts.value = selectedParts.value.filter((item) => item.id !== part.id)
-    return
-  }
-
-  if (budget.value - spent.value < part.cost) {
-    errorMessage.value = 'Presupuesto insuficiente para este componente.'
-    return
-  }
-
-  selectedParts.value = [...selectedParts.value, part]
-}
-
-watch(budget, (value) => {
-  if (value < 0) {
-    budget.value = 0
-  }
-
-  if (value < spent.value) {
-    budget.value = spent.value
-    errorMessage.value = 'El presupuesto no puede ser menor que lo ya gastado.'
-  }
-})
+const emit = defineEmits<{
+  (event: 'update:robotName', value: string): void
+  (event: 'update:budget', value: number): void
+  (event: 'togglePart', value: PartItem): void
+}>()
 </script>
 
 <style scoped>
