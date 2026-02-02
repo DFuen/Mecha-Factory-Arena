@@ -46,7 +46,30 @@
         </div>
       </div>
 
-      <div class="combat-view__vs">VS</div>
+      <div class="combat-view__center">
+        <div class="combat-view__vs">VS</div>
+        <div class="combat-view__controls">
+          <button
+            v-if="!combatStore.combatInProgress"
+            @click="handleBackToArena"
+            class="btn btn--primary"
+          >
+            Volver a Arena
+          </button>
+          <div v-else-if="combatStore.winner" class="combat-view__controls-row">
+            <button @click="handleRematch" class="btn btn--primary">Revancha</button>
+            <button @click="handleBackToArena" class="btn btn--ghost">Volver a Arena</button>
+          </div>
+          <button
+            v-else
+            @click="handleAttack"
+            :disabled="!combatStore.isPlayerTurn"
+            class="btn btn--attack"
+          >
+            {{ combatStore.isPlayerTurn ? 'Atacar' : 'Esperando...' }}
+          </button>
+        </div>
+      </div>
 
       <div class="fighter fighter--enemy">
         <div class="fighter__robot">
@@ -83,28 +106,6 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="combat-view__controls">
-      <button
-        v-if="!combatStore.combatInProgress"
-        @click="handleBackToArena"
-        class="btn btn--primary"
-      >
-        Volver a Arena
-      </button>
-      <div v-else-if="combatStore.winner" class="combat-view__controls-row">
-        <button @click="handleRematch" class="btn btn--primary">Revancha</button>
-        <button @click="handleBackToArena" class="btn btn--ghost">Volver a Arena</button>
-      </div>
-      <button
-        v-else
-        @click="handleAttack"
-        :disabled="!combatStore.isPlayerTurn"
-        class="btn btn--attack"
-      >
-        {{ combatStore.isPlayerTurn ? 'Atacar' : 'Esperando...' }}
-      </button>
     </section>
 
     <section class="combat-view__log">
@@ -229,6 +230,13 @@ const handleBackToArena = async () => {
   border-radius: 16px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+}
+
+.combat-view__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .fighter {
