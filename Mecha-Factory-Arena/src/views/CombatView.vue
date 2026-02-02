@@ -240,10 +240,14 @@ const handleBackToArena = async () => {
   padding: 16px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.95);
-  min-height: 380px;
+  min-height: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.fighter__robot :deep(.robot) {
+  margin-top: 0;
 }
 
 .fighter__info {
