@@ -90,22 +90,22 @@ const config = computed(() => ({
   head: {
     color: props.config?.head?.color ?? 'rgb(50, 116, 179)',
     borderRadius: props.config?.head?.borderRadius,
-    size: props.config?.head?.size ?? 100
+    size: props.config?.head?.size ?? 120
   },
   body: {
     color: props.config?.body?.color ?? 'rgb(50, 116, 179)',
-    width: props.config?.body?.width ?? 140,
-    height: props.config?.body?.height ?? 180
+    width: props.config?.body?.width ?? 170,
+    height: props.config?.body?.height ?? 210
   },
   arms: {
     color: props.config?.arms?.color ?? '#4b5563',
-    length: props.config?.arms?.length ?? 70,
-    thickness: props.config?.arms?.thickness ?? 16
+    length: props.config?.arms?.length ?? 90,
+    thickness: props.config?.arms?.thickness ?? 18
   },
   legs: {
     color: props.config?.legs?.color ?? '#4b5563',
     width: props.config?.legs?.width,
-    height: props.config?.legs?.height ?? 100,
+    height: props.config?.legs?.height ?? 120,
     gap: props.config?.legs?.gap
   }
 }))
@@ -216,7 +216,7 @@ const getPartStyle = (part: PartName) => {
 
 .robot {
   position: relative;
-  width: 180px;
+  width: 220px;
   margin: 90px auto 40px;
   color: rgb(50, 116, 179);
 }

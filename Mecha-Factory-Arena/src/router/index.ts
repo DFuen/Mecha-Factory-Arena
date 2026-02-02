@@ -18,6 +18,11 @@ const router = createRouter({
       component: () => import('../views/ArenaView.vue'),
     },
     {
+      path: '/combat',
+      name: 'combat',
+      component: () => import('../views/CombatView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
@@ -26,6 +31,17 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
   ],
+})
+
+router.beforeEach((to) => {
+  if (to.name === 'combat') {
+    const hasAccess = sessionStorage.getItem('combatAccess') === '1'
+    if (!hasAccess) {
+      return { name: 'arena' }
+    }
+    sessionStorage.removeItem('combatAccess')
+  }
+  return true
 })
 
 export default router

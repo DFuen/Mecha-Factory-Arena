@@ -6,6 +6,10 @@ export interface PartItem {
   id: string
   name: string
   cost: number
+  health?: number
+  attack?: number
+  defense?: number
+  speed?: number
 }
 
 export const useRobotStore = defineStore('robot', () => {
@@ -19,6 +23,13 @@ export const useRobotStore = defineStore('robot', () => {
   const spent = computed(() => selectedParts.value.reduce((total, item) => total + item.cost, 0))
   const remaining = computed(() => Math.max(budget.value - spent.value, 0))
   const selectedIds = computed(() => selectedParts.value.map((item) => item.id))
+
+  const totalStats = computed(() => ({
+    health: selectedParts.value.reduce((sum, part) => sum + (part.health ?? 0), 0),
+    attack: selectedParts.value.reduce((sum, part) => sum + (part.attack ?? 0), 0),
+    defense: selectedParts.value.reduce((sum, part) => sum + (part.defense ?? 0), 0),
+    speed: selectedParts.value.reduce((sum, part) => sum + (part.speed ?? 0), 0)
+  }))
 
   const setRobotName = (name: string) => {
     robotName.value = name
@@ -61,6 +72,7 @@ export const useRobotStore = defineStore('robot', () => {
     spent,
     remaining,
     selectedIds,
+    totalStats,
     errorMessage,
     setRobotName,
     setBudget,

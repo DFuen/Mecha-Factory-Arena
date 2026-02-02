@@ -45,7 +45,15 @@
         <li v-for="part in parts" :key="part.id" class="parts__item">
           <div class="parts__info">
             <span class="parts__name">{{ part.name }}</span>
-            <span class="parts__cost">{{ part.cost }}</span>
+            <div class="parts__details">
+              <span class="parts__cost">💰 {{ part.cost }}</span>
+              <span class="parts__stats">
+                <span v-if="part.health">❤️{{ part.health }}</span>
+                <span v-if="part.attack">⚔️{{ part.attack }}</span>
+                <span v-if="part.defense">🛡️{{ part.defense }}</span>
+                <span v-if="part.speed">⚡{{ part.speed }}</span>
+              </span>
+            </div>
           </div>
           <button
             class="parts__action"
@@ -65,6 +73,10 @@ type PartItem = {
   id: string
   name: string
   cost: number
+  health?: number
+  attack?: number
+  defense?: number
+  speed?: number
 }
 const props = defineProps<{
   robotName: string
@@ -168,9 +180,25 @@ const emit = defineEmits<{
   font-weight: 600;
 }
 
+.parts__details {
+  display: flex;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
 .parts__cost {
+  color: #059669;
+  font-weight: 600;
+}
+
+.parts__stats {
+  display: flex;
+  gap: 8px;
   color: #6b7280;
-  font-size: 0.9rem;
+}
+
+.parts__stats span {
+  font-size: 0.8rem;
 }
 
 .parts__action {

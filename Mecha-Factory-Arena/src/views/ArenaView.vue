@@ -42,7 +42,7 @@
           <p v-else class="arena-view__empty">No hay componentes seleccionados.</p>
         </div>
 
-        <button class="arena-view__cta">Iniciar combate</button>
+        <button class="arena-view__cta" @click="handleStartCombat">Iniciar combate</button>
       </aside>
     </section>
   </main>
@@ -51,9 +51,13 @@
 <script setup lang="ts">
 import RobotPreview from '../components/RobotPreview.vue'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useRobotStore } from '../stores/robot'
+import { useCombatStore } from '../stores/combat'
 
 const robotStore = useRobotStore()
+const combatStore = useCombatStore()
+const router = useRouter()
 
 const robotConfig = computed(() => ({
   name: robotStore.robotName || 'Centurion',
@@ -62,6 +66,37 @@ const robotConfig = computed(() => ({
   arms: { color: '#4b5563', length: 90, thickness: 18 },
   legs: { color: '#4b5563', height: 120 }
 }))
+
+const handleStartCombat = async () => {
+  const baseStats = {
+    health: 100,
+    attack: 15,
+    defense: 8,
+    speed: 10
+  }
+
+  const playerStats = {
+    name: robotStore.robotName || 'Tu Robot',
+    maxHealth: baseStats.health + robotStore.totalStats.health,
+    attack: baseStats.attack + robotStore.totalStats.attack,
+    defense: baseStats.defense + robotStore.totalStats.defense,
+    speed: baseStats.speed + robotStore.totalStats.speed,
+    color: 'rgb(50, 116, 179)'
+  }
+
+  const enemyStats = {
+    name: 'Robot Enemigo',
+    maxHealth: 120,
+    attack: 18,
+    defense: 10,
+    speed: 12,
+    color: 'rgb(220, 38, 38)'
+  }
+
+  combatStore.startCombat(playerStats, enemyStats)
+  sessionStorage.setItem('combatAccess', '1')
+  await router.push({ name: 'combat' })
+}
 </script>
 
 <style scoped>
