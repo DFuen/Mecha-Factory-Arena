@@ -1,0 +1,225 @@
+{
+  "heads": [
+    {
+      "id": 1,
+      "name": "Classic Head",
+      "color": "#fca5a5",
+      "borderRadius": "16px",
+      "size": 120,
+      "description": "A classic rounded head with a friendly appearance",
+      "cost": 100,
+      "weight": 25
+    },
+    {
+      "id": 2,
+      "name": "Angular Head",
+      "color": "#fb923c",
+      "borderRadius": "4px",
+      "size": 110,
+      "description": "Angular design for aggressive combat style",
+      "cost": 150,
+      "weight": 20
+    },
+    {
+      "id": 3,
+      "name": "Heavy Head",
+      "color": "#ef4444",
+      "borderRadius": "12px",
+      "size": 140,
+      "description": "Reinforced head unit with extra armor",
+      "cost": 200,
+      "weight": 35
+    },
+    {
+      "id": 4,
+      "name": "Scout Head",
+      "color": "#fbbf24",
+      "borderRadius": "50%",
+      "size": 100,
+      "description": "Lightweight head for improved mobility",
+      "cost": 120,
+      "weight": 15
+    },
+    {
+      "id": 5,
+      "name": "Elite Head",
+      "color": "#a78bfa",
+      "borderRadius": "20px",
+      "size": 130,
+      "description": "Advanced head with enhanced sensors",
+      "cost": 250,
+      "weight": 28
+    }
+  ],
+  "arms": [
+    {
+      "id": 1,
+      "name": "Standard Arms",
+      "color": "#4b5563",
+      "length": 90,
+      "thickness": 30,
+      "description": "Balanced arms for general combat",
+      "cost": 100,
+      "weight": 40
+    },
+    {
+      "id": 2,
+      "name": "Heavy Arms",
+      "color": "#374151",
+      "length": 100,
+      "thickness": 40,
+      "description": "Powerful arms with increased damage output",
+      "cost": 180,
+      "weight": 60
+    },
+    {
+      "id": 3,
+      "name": "Quick Arms",
+      "color": "#6b7280",
+      "length": 80,
+      "thickness": 20,
+      "description": "Lightweight arms for rapid attacks",
+      "cost": 130,
+      "weight": 25
+    },
+    {
+      "id": 4,
+      "name": "Long Arms",
+      "color": "#1f2937",
+      "length": 120,
+      "thickness": 28,
+      "description": "Extended reach for ranged advantage",
+      "cost": 160,
+      "weight": 45
+    },
+    {
+      "id": 5,
+      "name": "Assault Arms",
+      "color": "#dc2626",
+      "length": 95,
+      "thickness": 35,
+      "description": "Combat-oriented arms with weapon mounts",
+      "cost": 220,
+      "weight": 55
+    }
+  ],
+  "bodies": [
+    {
+      "id": 1,
+      "name": "Standard Body",
+      "color": "#93c5fd",
+      "width": 170,
+      "height": 210,
+      "description": "Balanced torso for all-around performance",
+      "cost": 150,
+      "weight": 80,
+      "armor": 50
+    },
+    {
+      "id": 2,
+      "name": "Heavy Body",
+      "color": "#3b82f6",
+      "width": 200,
+      "height": 230,
+      "description": "Heavily armored torso for maximum protection",
+      "cost": 250,
+      "weight": 120,
+      "armor": 90
+    },
+    {
+      "id": 3,
+      "name": "Light Body",
+      "color": "#60a5fa",
+      "width": 140,
+      "height": 180,
+      "description": "Lightweight frame for enhanced mobility",
+      "cost": 120,
+      "weight": 50,
+      "armor": 30
+    },
+    {
+      "id": 4,
+      "name": "Tank Body",
+      "color": "#1e40af",
+      "width": 220,
+      "height": 240,
+      "description": "Ultra-heavy armor for frontline combat",
+      "cost": 300,
+      "weight": 150,
+      "armor": 120
+    },
+    {
+      "id": 5,
+      "name": "Stealth Body",
+      "color": "#7c3aed",
+      "width": 150,
+      "height": 190,
+      "description": "Specialized body for covert operations",
+      "cost": 200,
+      "weight": 60,
+      "armor": 40
+    }
+  ],
+  "legs": [
+    {
+      "id": 1,
+      "name": "Standard Legs",
+      "color": "#4b5563",
+      "width": 160,
+      "height": 120,
+      "gap": 20,
+      "description": "Reliable legs for standard movement",
+      "cost": 100,
+      "weight": 60,
+      "speed": 50
+    },
+    {
+      "id": 2,
+      "name": "Sprint Legs",
+      "color": "#10b981",
+      "width": 140,
+      "height": 110,
+      "gap": 25,
+      "description": "Optimized for maximum speed",
+      "cost": 160,
+      "weight": 45,
+      "speed": 80
+    },
+    {
+      "id": 3,
+      "name": "Heavy Legs",
+      "color": "#6b7280",
+      "width": 180,
+      "height": 140,
+      "gap": 15,
+      "description": "Sturdy legs for carrying heavy loads",
+      "cost": 140,
+      "weight": 85,
+      "speed": 30
+    },
+    {
+      "id": 4,
+      "name": "Jump Legs",
+      "color": "#f59e0b",
+      "width": 150,
+      "height": 130,
+      "gap": 22,
+      "description": "Enhanced jump capability for vertical mobility",
+      "cost": 180,
+      "weight": 55,
+      "speed": 60
+    },
+    {
+      "id": 5,
+      "name": "Tank Treads",
+      "color": "#78716c",
+      "width": 190,
+      "height": 100,
+      "gap": 10,
+      "description": "All-terrain movement with stability",
+      "cost": 200,
+      "weight": 100,
+      "speed": 40
+    }
+  ]
+}
