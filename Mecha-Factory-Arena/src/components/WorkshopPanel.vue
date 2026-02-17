@@ -11,38 +11,32 @@
         <input v-model.trim="robotName" type="text" placeholder="Ej: Centurion" />
       </label>
 
-      <label class="field">
-        <span>Presupuesto inicial</span>
-        <input v-model.number="budget" type="number" min="0" step="50" />
-      </label>
-
       <div class="budget">
-        <div>
-          <strong>Gastado:</strong> {{ spent }}
-        </div>
-        <div :class="{ warning: remaining === 0 }">
-          <strong>Restante:</strong> {{ remaining }}
+        <div :class="{ warning: money < 200 }">
+          <strong>Presupuesto Disponible:</strong> {{ money }} €
         </div>
       </div>
-
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
 
     <div class="parts">
-      <h3>Componentes</h3>
+      <h3>Componentes Disponibles</h3>
       <ul class="parts__list">
         <li v-for="part in parts" :key="part.id" class="parts__item">
+          
           <div class="parts__info">
             <span class="parts__name">{{ part.name }}</span>
-            <span class="parts__cost">{{ part.cost }}</span>
+            <span class="parts__cost">{{ part.cost }} €</span>
+            <small style="color:#888">({{ part.type }})</small> 
           </div>
+
           <button
             class="parts__action"
-            :class="{ selected: isSelected(part.id) }"
+            :class="{ selected: isSelected(part) }"
             @click="togglePart(part)"
           >
-            {{ isSelected(part.id) ? 'Quitar' : 'Agregar' }}
+            {{ isSelected(part) ? 'Quitar' : 'Comprar' }}
           </button>
+
         </li>
       </ul>
     </div>
@@ -50,57 +44,54 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { useGameStore } from '@/stores/useGameStore'
+import { storeToRefs } from 'pinia'
 
+// 1. Definición de tipos para la lista local
 type PartItem = {
   id: string
   name: string
   cost: number
+  type: 'head' | 'body' | 'arms' | 'legs'
+  stats?: { health: number; attack: number; speed: number }
 }
 
-const robotName = ref('')
-const budget = ref(1000)
-const selectedParts = ref<PartItem[]>([])
-const errorMessage = ref('')
+// 2. Conexión con el Store
+const store = useGameStore()
+const { robot, money, robotName } = storeToRefs(store)
 
+// 3. Datos de las piezas (Hardcoded para este ejemplo)
 const parts: PartItem[] = [
-  { id: 'head_basic', name: 'Cabeza básica', cost: 200 },
-  { id: 'body_steel', name: 'Cuerpo de acero', cost: 350 },
-  { id: 'arms_hydraulic', name: 'Brazos hidráulicos', cost: 250 },
-  { id: 'legs_turbo', name: 'Piernas turbo', cost: 300 }
+  { id: 'head_basic', name: 'Cabeza Básica', cost: 200, type: 'head' },
+  { id: 'body_steel', name: 'Cuerpo de Acero', cost: 350, type: 'body' },
+  { id: 'arms_hydraulic', name: 'Brazos Hidráulicos', cost: 250, type: 'arms' },
+  { id: 'legs_turbo', name: 'Piernas Turbo', cost: 300, type: 'legs' }
 ]
 
-const spent = computed(() => selectedParts.value.reduce((total, item) => total + item.cost, 0))
-const remaining = computed(() => Math.max(budget.value - spent.value, 0))
-
-const isSelected = (id: string) => selectedParts.value.some((item) => item.id === id)
-
-const togglePart = (part: PartItem) => {
-  errorMessage.value = ''
-
-  if (isSelected(part.id)) {
-    selectedParts.value = selectedParts.value.filter((item) => item.id !== part.id)
-    return
-  }
-
-  if (budget.value - spent.value < part.cost) {
-    errorMessage.value = 'Presupuesto insuficiente para este componente.'
-    return
-  }
-
-  selectedParts.value = [...selectedParts.value, part]
+// 4. Lógica Visual (¿Está comprado?)
+// Comparamos si la pieza que hay en el store (robot.head) tiene el mismo ID que la de la lista
+const isSelected = (part: PartItem) => {
+  const equippedPart = robot.value[part.type]
+  return equippedPart?.id === part.id
 }
 
-watch(budget, (value) => {
-  if (value < 0) {
-    budget.value = 0
+// 5. Acción de compra/venta
+const togglePart = (part: PartItem) => {
+  // Si ya la tengo puesta, la quito (vender)
+  if (isSelected(part)) {
+    store.removePart(part.type)
+    return
   }
 
-  if (value < spent.value) {
-    budget.value = spent.value
-    errorMessage.value = 'El presupuesto no puede ser menor que lo ya gastado.'
+  // Si intento comprar pero no tengo dinero
+  if (money.value < part.cost) {
+    alert("❌ Fondos insuficientes para comprar esta pieza.")
+    return
   }
-})
+
+  // Si todo bien, comprar
+  store.equipPart(part, part.type)
+}
 </script>
 
 <style scoped>
@@ -149,15 +140,11 @@ watch(budget, (value) => {
   border-radius: 12px;
   background: #f3f4f6;
   font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .budget .warning {
-  color: #b91c1c;
-}
-
-.error {
-  color: #dc2626;
-  font-weight: 600;
+  color: #b91c1c; /* Rojo si queda poco dinero */
 }
 
 .parts__list {
@@ -197,12 +184,21 @@ watch(budget, (value) => {
   border: none;
   border-radius: 10px;
   padding: 8px 16px;
-  background: #2563eb;
+  background: #2563eb; /* Azul para comprar */
   color: #fff;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
+.parts__action:hover {
+  background: #1d4ed8;
+}
+
+/* Estilo rojo cuando el botón es "Quitar" */
 .parts__action.selected {
-  background: #ef4444;
+  background: #ef4444; 
+}
+.parts__action.selected:hover {
+  background: #dc2626;
 }
 </style>

@@ -1,99 +1,84 @@
 <template>
   <div class="robot-container" :class="{ dragging: isDragging }">
-    <button @click="resetPositions" class="reset-button">Restablecer</button>
+    
+    <button @click="resetPositions" class="reset-button">Restablecer Posición</button>
+
     <div class="robot">
+      
       <Head
-        color="rgb(50, 116, 179)"
+        v-if="robot.head"
+        color="rgb(50, 116, 179)" 
         :size="120"
         :style="getPartStyle('head')"
         @mousedown.prevent="onDragStart('head', $event)"
-      />
+      >
+        <span class="part-label">{{ robot.head.name }}</span>
+      </Head>
+      <div v-else class="placeholder head-placeholder">Falta Cabeza</div>
 
       <Arms
+        v-if="robot.arms"
         color="#4b5563"
         :length="90"
         :thickness="18"
         :style="getPartStyle('arms')"
         @mousedown.prevent="onDragStart('arms', $event)"
       />
+      <div v-else class="placeholder arms-placeholder">Faltan Brazos</div>
+
       <Body
+        v-if="robot.body"
         color="rgb(50, 116, 179)"
         :width="170"
         :height="210"
         :style="getPartStyle('body')"
         @mousedown.prevent="onDragStart('body', $event)"
       />
+      <div v-else class="placeholder body-placeholder">Falta Cuerpo</div>
 
       <Legs
+        v-if="robot.legs"
         color="#4b5563"
         :height="120"
         :style="getPartStyle('legs')"
         @mousedown.prevent="onDragStart('legs', $event)"
       />
+      <div v-else class="placeholder legs-placeholder">Faltan Piernas</div>
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useGameStore } from '@/stores/useGameStore' // IMPORTANTE: Conexión al Store
+import { storeToRefs } from 'pinia'
+
+// Importamos tus componentes visuales
 import Head from './HeadPart.vue'
 import Body from './BodyPart.vue'
 import Arms from './ArmsPart.vue'
 import Legs from './LegsPart.vue'
 
-// Definimos el contrato del robot usando los atributos exactos de tus archivos
-interface RobotConfig {
-  name: string
-  head: {
-    color?: string
-    borderRadius?: string
-    size?: number
-    health?: number
-    attack?: number
-    defense?: number
-  }
-  body: {
-    color?: string
-    width?: number
-    height?: number
-    health?: number
-    attack?: number
-    defense?: number
-  }
-  arms: {
-    color?: string
-    length?: number
-    thickness?: number
-    health?: number
-    attack?: number
-    defense?: number
-  }
-  legs: {
-    color?: string
-    width?: number
-    height?: number
-    gap?: number
-    health?: number
-    attack?: number
-    defense?: number
-  }
-}
+// --- 1. CONEXIÓN CON PINIA ---
+const store = useGameStore()
+// Usamos storeToRefs para mantener la reactividad
+const { robot } = storeToRefs(store)
 
-const props = defineProps<{
-  config: RobotConfig
-}>()
-
+// --- 2. LÓGICA DE ARRASTRE (Tu código original mantenido) ---
 type PartName = 'head' | 'body' | 'arms' | 'legs';
 
 const isDragging = ref(false)
 const draggedPart = ref<PartName | null>(null)
+
 const partPositions = reactive({
   head: { x: 0, y: 0 },
   body: { x: 0, y: 0 },
   arms: { x: 0, y: 0 },
   legs: { x: 0, y: 0 }
 })
-// Almacena la posición inicial del ratón y de la pieza al empezar a arrastrar
+
+// Estado del arrastre
 const dragContext = {
   initialMouseX: 0,
   initialMouseY: 0,
@@ -102,17 +87,16 @@ const dragContext = {
 }
 
 const onDragStart = (part: PartName, event: MouseEvent) => {
-  console.log('Pieza seleccionada:', part);
+  if (!robot.value[part]) return; // Seguridad: No arrastrar si no existe la pieza
+
   isDragging.value = true
   draggedPart.value = part
 
-  // Guardar el estado inicial del arrastre
   dragContext.initialMouseX = event.clientX
   dragContext.initialMouseY = event.clientY
   dragContext.initialPartX = partPositions[part].x
   dragContext.initialPartY = partPositions[part].y
 
-  // Añadir listeners globales para un arrastre robusto
   window.addEventListener('mousemove', onDrag)
   window.addEventListener('mouseup', onDragEnd)
 }
@@ -121,20 +105,15 @@ const onDrag = (event: MouseEvent) => {
   if (!isDragging.value || !draggedPart.value) return
 
   const part = draggedPart.value;
-  
-  // Calcular el desplazamiento del ratón desde el inicio
   const deltaX = event.clientX - dragContext.initialMouseX
   const deltaY = event.clientY - dragContext.initialMouseY
 
-  // La nueva posición es la posición inicial más el desplazamiento
   partPositions[part].x = dragContext.initialPartX + deltaX
   partPositions[part].y = dragContext.initialPartY + deltaY
 }
 
 const onDragEnd = () => {
   isDragging.value = false
-  
-  // Limpiar los listeners globales
   window.removeEventListener('mousemove', onDrag)
   window.removeEventListener('mouseup', onDragEnd)
 }
@@ -154,7 +133,6 @@ const getPartStyle = (part: PartName) => {
     zIndex: draggedPart.value === part && isDragging.value ? 10 : 1
   };
 
-  // Desactivar la animación de la pieza que se está arrastrando para un arrastre suave
   if (isDragging.value && draggedPart.value === part) {
     style.animation = 'none';
   }
@@ -166,9 +144,12 @@ const getPartStyle = (part: PartName) => {
 <style scoped>
 .robot-container {
   width: 100%;
-  height: 100vh;
+  height: 100%; /* Ajustado para encajar en el layout */
+  min-height: 500px;
   position: relative;
-  /* overflow: hidden; <-- Eliminado para quitar la barrera */
+  background: #f8fafc; /* Fondo ligero para ver mejor el robot */
+  border-radius: 16px;
+  border: 2px dashed #e2e8f0;
 }
 
 .reset-button {
@@ -176,26 +157,47 @@ const getPartStyle = (part: PartName) => {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 8px 16px;
+  font-size: 14px;
   cursor: pointer;
   z-index: 100;
-  background-color: #ef4444;
+  background-color: #64748b;
   color: white;
   border: none;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0.8;
+  transition: opacity 0.2s;
 }
 .reset-button:hover {
-  background-color: #dc2626;
+  opacity: 1;
 }
 
 .robot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  width: 220px;
-  margin: 100px auto 40px; /* Aumentado margen superior para dejar espacio al botón */
-  color: rgb(50, 116, 179);
+  margin-top: 60px;
+  gap: 10px; /* Separación base entre piezas */
 }
+
+/* Placeholders: Lo que se ve cuando no has comprado la pieza */
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #94a3b8;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.head-placeholder { width: 100px; height: 100px; }
+.body-placeholder { width: 150px; height: 180px; }
+.arms-placeholder { width: 200px; height: 40px; }
+.legs-placeholder { width: 120px; height: 100px; }
 
 :deep(.head),
 :deep(.arms),
@@ -209,7 +211,6 @@ const getPartStyle = (part: PartName) => {
   cursor: grabbing;
 }
 
-/* Aplicar el cursor "grabbing" directamente a la pieza activa */
 :deep(.head:active),
 :deep(.arms:active),
 :deep(.body:active),
