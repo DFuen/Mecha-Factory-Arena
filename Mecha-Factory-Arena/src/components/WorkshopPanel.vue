@@ -26,7 +26,9 @@
           <div class="parts__info">
             <span class="parts__name">{{ part.name }}</span>
             <span class="parts__cost">{{ part.cost }} €</span>
-            <small style="color:#888">({{ part.type }})</small> 
+            <div class="parts__stats">
+              <small>❤️ {{ part.health }} | ⚔️ {{ part.attack }} | ⚡ {{ part.speed }}</small>
+            </div>
           </div>
 
           <button
@@ -46,40 +48,42 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/useGameStore'
 import { storeToRefs } from 'pinia'
+import type { Part } from '@/interfaces/RobotInterfaces'
 
-// 1. Definición de tipos para la lista local
-type PartItem = {
-  id: string
-  name: string
-  cost: number
-  type: 'head' | 'body' | 'arms' | 'legs'
-  stats?: { health: number; attack: number; speed: number }
-}
-
-// 2. Conexión con el Store
+// Conexión con el Store
 const store = useGameStore()
 const { robot, money, robotName } = storeToRefs(store)
 
-// 3. Datos de las piezas (Hardcoded para este ejemplo)
-const parts: PartItem[] = [
-  { id: 'head_basic', name: 'Cabeza Básica', cost: 200, type: 'head' },
-  { id: 'body_steel', name: 'Cuerpo de Acero', cost: 350, type: 'body' },
-  { id: 'arms_hydraulic', name: 'Brazos Hidráulicos', cost: 250, type: 'arms' },
-  { id: 'legs_turbo', name: 'Piernas Turbo', cost: 300, type: 'legs' }
+// Datos de las piezas (deberían cargarse dinámicamente con Axios más adelante)
+const parts: Part[] = [
+  { id: 'head_basic', name: 'Cabeza Básica', cost: 200, health: 30, attack: 5, speed: 10 },
+  { id: 'body_steel', name: 'Cuerpo de Acero', cost: 350, health: 80, attack: 10, speed: 5 },
+  { id: 'arms_hydraulic', name: 'Brazos Hidráulicos', cost: 250, health: 20, attack: 40, speed: 15 },
+  { id: 'legs_turbo', name: 'Piernas Turbo', cost: 300, health: 25, attack: 8, speed: 35 }
 ]
 
-// 4. Lógica Visual (¿Está comprado?)
-// Comparamos si la pieza que hay en el store (robot.head) tiene el mismo ID que la de la lista
-const isSelected = (part: PartItem) => {
-  const equippedPart = robot.value[part.type]
+// Determinar el tipo de pieza según su ID
+const getPartType = (part: Part): 'head' | 'body' | 'arms' | 'legs' => {
+  if (part.id.startsWith('head')) return 'head'
+  if (part.id.startsWith('body')) return 'body'
+  if (part.id.startsWith('arms')) return 'arms'
+  return 'legs'
+}
+
+// Lógica Visual (¿Está comprado?)
+const isSelected = (part: Part) => {
+  const type = getPartType(part)
+  const equippedPart = robot.value[type]
   return equippedPart?.id === part.id
 }
 
-// 5. Acción de compra/venta
-const togglePart = (part: PartItem) => {
+// Acción de compra/venta
+const togglePart = (part: Part) => {
+  const type = getPartType(part)
+  
   // Si ya la tengo puesta, la quito (vender)
   if (isSelected(part)) {
-    store.removePart(part.type)
+    store.removePart(type)
     return
   }
 
@@ -90,7 +94,7 @@ const togglePart = (part: PartItem) => {
   }
 
   // Si todo bien, comprar
-  store.equipPart(part, part.type)
+  store.equipPart(part, type)
 }
 </script>
 
@@ -169,6 +173,7 @@ const togglePart = (part: PartItem) => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
 }
 
 .parts__name {
@@ -178,6 +183,12 @@ const togglePart = (part: PartItem) => {
 .parts__cost {
   color: #6b7280;
   font-size: 0.9rem;
+}
+
+.parts__stats {
+  font-size: 0.85rem;
+  color: #059669;
+  font-weight: 600;
 }
 
 .parts__action {

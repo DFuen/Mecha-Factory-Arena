@@ -1,5 +1,4 @@
-// Ajusta la ruta de importación según donde tengas tus interfaces
-import type { RobotSelection } from '../interfaces/RobotInterfaces'; 
+import type { RobotSelection } from '@/interfaces/RobotInterfaces'
 
 /**
  * REGLAS DE LA ARENA

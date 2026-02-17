@@ -1,0 +1,34 @@
+[
+  {
+    "id": "enemy_1",
+    "name": "Dron de Entrenamiento",
+    "health": 100,
+    "maxHealth": 100,
+    "attack": 15,
+    "speed": 20
+  },
+  {
+    "id": "enemy_2",
+    "name": "Guardia Mk-I",
+    "health": 150,
+    "maxHealth": 150,
+    "attack": 25,
+    "speed": 30
+  },
+  {
+    "id": "enemy_3",
+    "name": "Centinela Pesado",
+    "health": 200,
+    "maxHealth": 200,
+    "attack": 35,
+    "speed": 25
+  },
+  {
+    "id": "boss_1",
+    "name": "Titan Destructor",
+    "health": 300,
+    "maxHealth": 300,
+    "attack": 50,
+    "speed": 40
+  }
+]

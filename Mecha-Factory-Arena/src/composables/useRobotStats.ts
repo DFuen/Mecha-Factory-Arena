@@ -1,26 +1,5 @@
-import { computed, Ref } from 'vue'
-
-export interface Part {
-  id: string
-  name: string
-  cost: number
-  health?: number
-  attack?: number
-  speed?: number
-}
-
-export interface RobotSelection {
-  head: Part | null
-  body: Part | null
-  arms: Part | null
-  legs: Part | null
-}
-
-export interface RobotStats {
-  health: number
-  attack: number
-  speed: number
-}
+import { computed, type Ref } from 'vue'
+import type { RobotSelection, RobotStats } from '@/interfaces/RobotInterfaces'
 
 /**
  * Composable para calcular automáticamente las estadísticas del robot

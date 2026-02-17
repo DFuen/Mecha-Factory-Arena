@@ -1,6 +1,34 @@
 [
-  { "id": "head_basic", "name": "Cabeza básica", "cost": 200 },
-  { "id": "body_steel", "name": "Cuerpo de acero", "cost": 350 },
-  { "id": "arms_hydraulic", "name": "Brazos hidráulicos", "cost": 250 },
-  { "id": "legs_turbo", "name": "Piernas turbo", "cost": 300 }
+  {
+    "id": "head_basic",
+    "name": "Cabeza Básica",
+    "cost": 200,
+    "health": 30,
+    "attack": 5,
+    "speed": 10
+  },
+  {
+    "id": "body_steel",
+    "name": "Cuerpo de Acero",
+    "cost": 350,
+    "health": 80,
+    "attack": 10,
+    "speed": 5
+  },
+  {
+    "id": "arms_hydraulic",
+    "name": "Brazos Hidráulicos",
+    "cost": 250,
+    "health": 20,
+    "attack": 40,
+    "speed": 15
+  },
+  {
+    "id": "legs_turbo",
+    "name": "Piernas Turbo",
+    "cost": 300,
+    "health": 25,
+    "attack": 8,
+    "speed": 35
+  }
 ]
