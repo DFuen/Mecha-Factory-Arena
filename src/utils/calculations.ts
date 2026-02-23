@@ -21,9 +21,9 @@ export function calculateRobotStats(robot: Robot): RobotStats {
   })
 
   // Asegurar valores mínimos
-  stats.health = Math.max(120, stats.health)
+  stats.health = Math.max(30, stats.health)
   stats.attack = Math.max(1, stats.attack)
-  stats.speed = Math.max(1, Math.abs(stats.speed))
+  stats.speed = Math.max(1, stats.speed)
 
   return stats
 }
@@ -59,28 +59,33 @@ export function calculateDamage(
   critical: boolean = false,
   isPlayerAttack: boolean = false
 ): number {
-  const variance = 0.8 + Math.random() * 0.25
-  let baseDamage = attackerStats.attack * 1.2 + Math.random() * 15
-  
-  if (critical) {
-    baseDamage *= 1.7
+  const variance = 0.88 + Math.random() * 0.20
+
+  // Ofensa y defensa expresadas como rating, no como daño bruto
+  const offenseRating = attackerStats.attack * 0.65 + attackerStats.speed * 0.10
+  const defenseRating = defenderStats.health * 0.20 + defenderStats.speed * 0.14
+
+  let damage = (offenseRating * variance) - (defenseRating * 0.48)
+
+  if (isPlayerAttack) {
+    damage *= 1.05
   }
 
-  // El jugador recibe bonus de daño reducido
-  if (isPlayerAttack) {
-    baseDamage *= 1.15
-  }
-  
-  const defense = defenderStats.health * 0.12
-  const finalDamage = Math.max(8, Math.floor((baseDamage * variance) - defense))
-  return finalDamage
+  // Daño mínimo garantizado: 6% de la vida del defensor
+  const chipDamage = Math.max(3, Math.floor(defenderStats.health * 0.06))
+
+  // Tope normal: 18% de la vida del defensor por turno (~6-8 turnos para matar)
+  // Tope crítico: 26% de la vida del defensor
+  const softCap = Math.floor(defenderStats.health * (critical ? 0.26 : 0.18))
+
+  return Math.min(softCap, Math.max(chipDamage, Math.floor(damage)))
 }
 
 /**
  * Calcular probabilidad de golpe crítico
  */
 export function isCriticalHit(speed: number): boolean {
-  const critChance = Math.min(0.35, speed / 80)
+  const critChance = Math.min(0.28, 0.04 + speed / 220)
   return Math.random() < critChance
 }
 
@@ -90,22 +95,57 @@ export function isCriticalHit(speed: number): boolean {
 export function getAIDecision(
   playerHealth: number,
   aiHealth: number,
-  aiStats: RobotStats
+  aiStats: RobotStats,
+  aiMaxHealth: number = aiStats.health
 ): 'attack' | 'heal' {
-  const healthPercentage = aiHealth / (aiStats.health * 1.5)
+  const healthPercentage = aiHealth / Math.max(1, aiMaxHealth)
 
-  // Si la IA está en mal estado, intenta curarse
-  if (healthPercentage < 0.3) {
-    return 'heal'
+  // Si la IA está muy dañada, prioriza curarse
+  if (healthPercentage < 0.25) {
+    return Math.random() < 0.75 ? 'heal' : 'attack'
   }
 
-  // Si la salud del jugador es baja, ataca
-  if (playerHealth < 30) {
+  // Si el jugador está rematable, ataca
+  if (playerHealth <= aiStats.attack * 2) {
     return 'attack'
   }
 
-  // Por defecto, ataca
-  return Math.random() > 0.4 ? 'attack' : 'heal'
+  // Curación situacional en media vida
+  if (healthPercentage < 0.45 && aiHealth < playerHealth) {
+    return Math.random() < 0.45 ? 'heal' : 'attack'
+  }
+
+  // Por defecto la IA es agresiva
+  return Math.random() < 0.8 ? 'attack' : 'heal'
+}
+
+/**
+ * Curación escalada para evitar loops infinitos
+ */
+export function calculateHealAmount(
+  stats: RobotStats,
+  currentHealth: number,
+  maxHealth: number
+): number {
+  const missingHealth = Math.max(0, maxHealth - currentHealth)
+  if (missingHealth === 0) return 0
+
+  const baseHeal = Math.floor(stats.attack * 0.3 + stats.speed * 0.12 + 8)
+  const maxHealPerTurn = Math.floor(maxHealth * 0.18)
+  return Math.min(missingHealth, Math.max(8, Math.min(baseHeal, maxHealPerTurn)))
+}
+
+/**
+ * Escalar enemigo según el robot del jugador
+ */
+export function generateBalancedEnemyStats(playerStats: RobotStats): RobotStats {
+  const variance = 0.94 + Math.random() * 0.12
+
+  return {
+    health: Math.max(35, Math.floor(playerStats.health * (0.9 + Math.random() * 0.12))),
+    attack: Math.max(8, Math.floor(playerStats.attack * (0.88 + Math.random() * 0.15) * variance)),
+    speed: Math.max(4, Math.floor(playerStats.speed * (0.85 + Math.random() * 0.2)))
+  }
 }
 
 /**

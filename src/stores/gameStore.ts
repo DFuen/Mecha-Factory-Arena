@@ -5,7 +5,9 @@ import {
   calculateRobotStats,
   calculateDamage,
   isCriticalHit,
-  getAIDecision
+  getAIDecision,
+  calculateHealAmount,
+  generateBalancedEnemyStats
 } from '../utils/calculations'
 import { robotService } from '../services/robotService'
 
@@ -135,6 +137,14 @@ export const useGameStore = defineStore('game', () => {
       aiStats.attack = enemyStats.attack
       aiStats.speed = enemyStats.speed
     } else {
+      const playerStats = robot.totalStats.health > 0
+        ? robot.totalStats
+        : { health: 45, attack: 14, speed: 10 }
+      const generatedEnemy = generateBalancedEnemyStats(playerStats)
+
+      aiStats.health = generatedEnemy.health
+      aiStats.attack = generatedEnemy.attack
+      aiStats.speed = generatedEnemy.speed
       battle.aiMaxHealth = aiStats.health
       battle.aiHealth = aiStats.health
     }
@@ -171,7 +181,11 @@ export const useGameStore = defineStore('game', () => {
   function playerHeal() {
     if (battle.currentTurn !== 'player' || battle.isFinished) return
 
-    const healAmount = Math.floor(robot.totalStats.attack * 0.5) + 10
+    const healAmount = calculateHealAmount(
+      robot.totalStats,
+      battle.playerHealth,
+      battle.playerMaxHealth
+    )
     const oldHealth = battle.playerHealth
     battle.playerHealth = Math.min(battle.playerMaxHealth, battle.playerHealth + healAmount)
     const actualHeal = battle.playerHealth - oldHealth
@@ -192,10 +206,10 @@ export const useGameStore = defineStore('game', () => {
   function aiTurn() {
     if (battle.currentTurn !== 'ai' || battle.isFinished) return
 
-    const decision = getAIDecision(battle.playerHealth, battle.aiHealth, aiStats)
+    const decision = getAIDecision(battle.playerHealth, battle.aiHealth, aiStats, battle.aiMaxHealth)
 
     if (decision === 'heal') {
-      const healAmount = Math.floor(aiStats.attack * 0.5) + 10
+      const healAmount = calculateHealAmount(aiStats, battle.aiHealth, battle.aiMaxHealth)
       const oldHealth = battle.aiHealth
       battle.aiHealth = Math.min(battle.aiMaxHealth, battle.aiHealth + healAmount)
       const actualHeal = battle.aiHealth - oldHealth
@@ -423,10 +437,10 @@ export const useGameStore = defineStore('game', () => {
   function enhancedAiTurn() {
     if (battle.currentTurn !== 'ai' || battle.isFinished) return
 
-    const decision = getAIDecision(battle.playerHealth, battle.aiHealth, aiStats)
+    const decision = getAIDecision(battle.playerHealth, battle.aiHealth, aiStats, battle.aiMaxHealth)
 
     if (decision === 'heal') {
-      const healAmount = Math.floor(aiStats.attack * 0.5) + 10
+      const healAmount = calculateHealAmount(aiStats, battle.aiHealth, battle.aiMaxHealth)
       const oldHealth = battle.aiHealth
       battle.aiHealth = Math.min(battle.aiMaxHealth, battle.aiHealth + healAmount)
       const actualHeal = battle.aiHealth - oldHealth

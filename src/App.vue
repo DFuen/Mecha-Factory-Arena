@@ -17,7 +17,7 @@ const robotName = computed(() => gameStore.robot.name || 'Tu Robot')
         </router-link>
 
         <div class="navbar__links">
-          <router-link to="/" class="navbar__link">Mundo Abierto</router-link>
+          <router-link to="/" class="navbar__link">Inicio</router-link>
           <router-link to="/garage" class="navbar__link">Taller</router-link>
           <router-link to="/arena" class="navbar__link" :class="{ disabled: !gameStore.isRobotComplete }">
             Simulador
